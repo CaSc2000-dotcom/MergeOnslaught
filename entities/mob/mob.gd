@@ -1,17 +1,21 @@
 extends RigidBody2D
 
+
 # In your mob's script
 @export var speed: float = 60.0
 var player: Node = null
+
 
 func _ready() -> void:
 	# Find the player node as soon as the mob is ready
 	player = get_tree().get_first_node_in_group("player")
 	$AnimatedSprite2D.play()
 
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
+
 
 func _physics_process(delta: float) -> void:
 	if player: # Make sure the player exists before trying to move
@@ -22,6 +26,7 @@ func _physics_process(delta: float) -> void:
 		linear_velocity = direction * speed
 		
 		_update_animation()
+
 
 func _update_animation() -> void:
 	if linear_velocity.length() == 0.0: # When the mob isn't moving
