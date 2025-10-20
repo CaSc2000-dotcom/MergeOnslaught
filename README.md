@@ -2,6 +2,10 @@
 
 > **Note:** This project is currently under active development. Features, gameplay, and documentation are subject to change. Stay tuned for updates!
 
+## ASSETS USED:
+TinyTown: https://kenney.nl/assets/tiny-town
+The Adventurer - Female Character Asset: https://sscary.itch.io/the-adventurer-female
+
 # Overview
 
 This project is a unique game developed using the Godot game engine, blending elements from Vampire Survivors and the classic puzzle game 2048. The gameplay is split into two main sections: on the left, players face waves of enemies in a survival-style arena, while on the right, they play a 4x4 grid-based 2048 puzzle. Successfully merging tiles in the puzzle grants power-ups, which can be used to gain advantages against the enemies. The game will feature an inventory system for managing collected power-ups and items, and a leaderboard to track high scores. Development will utilize either GDScript or C++ (via GDExtension) based on compatibility with Godot 4.0 and ease of use.
