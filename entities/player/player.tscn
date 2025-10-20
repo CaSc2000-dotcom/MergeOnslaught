@@ -316,7 +316,7 @@ animations = [{
 "speed": 15.0
 }]
 
-[node name="Player" type="Area2D"]
+[node name="Player" type="Area2D" groups=["player"]]
 script = ExtResource("1_abrql")
 metadata/_edit_group_ = true
 
