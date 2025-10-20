@@ -7,7 +7,7 @@ var velocity: Vector2  # The player's movement vector.
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	$AnimatedSprite2D.play()
+	hide()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -40,10 +40,14 @@ func _switchAnimation() -> void:
 		return
 	$AnimatedSprite2D.animation = "walk_right" if velocity.x > 0.0 else "walk_left"
 	
-	
-
 func _on_body_entered(body: Node2D) -> void:
 	hide() # Player disappears after being hit.
 	hit.emit()
 	# Must be deferred as we can't change physics properties on a physics callback.
 	$CollisionShape2D.set_deferred("disabled", true)
+
+func start(pos: Vector2) -> void:
+	position = pos
+	show()
+	$CollisionShape2D.disabled = false
+	$AnimatedSprite2D.play()
