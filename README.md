@@ -4,9 +4,13 @@
 
 ## ASSETS USED:
 TinyTown: https://kenney.nl/assets/tiny-town
+
 The Adventurer - Female Character Asset: https://sscary.itch.io/the-adventurer-female
+
 Tiny RPG Character Asset Pack: https://zerie.itch.io/tiny-rpg-character-asset-pack
+
 IMMORTAL font by Apostrophic Labs: https://www.1001freefonts.com/immortal.font
+
 Menu Background: https://edermunizz.itch.io/free-pixel-art-forest
 
 ---
