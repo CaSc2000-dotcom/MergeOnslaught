@@ -27,6 +27,8 @@ func new_game() -> void:
 	$Player.start($StartPosition.position)
 	$StartTimer.start()
 	
+	get_tree().call_group("mobs", "queue_free")
+	
 	$Player/Camera2D/HUD.update_score(score)
 	$Player/Camera2D/HUD.show_message("Get Ready")
 

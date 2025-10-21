@@ -18,7 +18,7 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if player: # Make sure the player exists before trying to move
+	if player.visible: # Make sure the player exists before trying to move
 		# Calculate the direction from the mob to the player
 		var direction: Vector2 = (player.global_position - self.global_position).normalized()
 		
