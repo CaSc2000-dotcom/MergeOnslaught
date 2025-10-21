@@ -25,6 +25,8 @@ As a software engineer, I wanted to challenge myself to make my first game from 
 
 ## Game Summary
 
+### [Downlaods/Releases](https://github.com/CaSc2000-dotcom/MergeOnslaught/releases/)
+
 You are an adventurer and have to survive the onslaught of orcs coming from all angles! 
 
 ### Controls:
