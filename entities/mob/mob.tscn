@@ -106,9 +106,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_cobj6")
 }],
-"loop": true,
+"loop": false,
 "name": &"death",
-"speed": 10.0
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -123,9 +123,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4vgeu")
 }],
-"loop": true,
+"loop": false,
 "name": &"hurt",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -193,7 +193,7 @@ metadata/_edit_group_ = true
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(1.5, 1.5)
 sprite_frames = SubResource("SpriteFrames_qir1u")
-animation = &"walk"
+animation = &"hurt"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -0.6)

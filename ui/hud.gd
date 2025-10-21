@@ -1,3 +1,7 @@
+# Author: Caleb Schmid
+# Name: hud.gd
+# Controls the HUD 
+
 extends CanvasLayer
 
 
@@ -14,12 +18,14 @@ func _process(_delta: float) -> void:
 	pass
 
 
+# Displays a given text as a large message in the middle of the screen
 func show_message(text: String) -> void:
 	$Message.text = text
 	$Message.show()
 	$MessageTimer.start()
 
 
+# Shows the game over screen
 func show_game_over() -> void:
 	show_message("Game Over")
 	# Wait until the MessageTimer has counted downz
@@ -32,14 +38,17 @@ func show_game_over() -> void:
 	$StartButton.show()
 
 
+# Updates the current score with a given score 
 func update_score(score: int) -> void:
 	$ScoreLabel.text = str(score)
 
 
+# Emits start_game when the start button is pressed
 func _on_start_button_pressed() -> void:
 	$StartButton.hide()
 	start_game.emit()
 
 
+# Hides the Message when the MessageTimer runs out
 func _on_message_timer_timeout() -> void:
 	$Message.hide()

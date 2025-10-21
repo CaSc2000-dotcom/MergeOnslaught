@@ -1,8 +1,9 @@
-[gd_scene load_steps=46 format=3 uid="uid://bpcv3x0h410kk"]
+[gd_scene load_steps=51 format=3 uid="uid://bpcv3x0h410kk"]
 
 [ext_resource type="Script" uid="uid://bd48wlyfx15bd" path="res://entities/player/player.gd" id="1_abrql"]
 [ext_resource type="Texture2D" uid="uid://d1n28mgjihdbt" path="res://assets/player/Idle/Idle.png" id="2_abrql"]
 [ext_resource type="Texture2D" uid="uid://knmee3tat6s8" path="res://assets/player/Walk/walk.png" id="3_sglur"]
+[ext_resource type="Texture2D" uid="uid://bjudtaccsd40x" path="res://assets/player/Attack/Soldier-Attack01_Effect.png" id="4_bls4j"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sglur"]
 radius = 4.0
@@ -316,14 +317,71 @@ animations = [{
 "speed": 15.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_sglur"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2h0qb"]
+atlas = ExtResource("4_bls4j")
+region = Rect2(300, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mmk7k"]
+atlas = ExtResource("4_bls4j")
+region = Rect2(400, 0, 100, 100)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bls4j"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": null
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2h0qb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mmk7k")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"attack",
+"speed": 20.0
+}]
+
 [node name="Player" type="Area2D" groups=["player"]]
 script = ExtResource("1_abrql")
-metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 scale = Vector2(1.5, 1.5)
 shape = SubResource("CapsuleShape2D_sglur")
+metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_a1qjk")
 animation = &"walk_right"
+metadata/_edit_group_ = true
+
+[node name="WeaponHitbox" type="Area2D" parent="."]
+position = Vector2(31, 0)
+rotation = 0.38397244
+scale = Vector2(2, 2)
+skew = 0.80285144
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WeaponHitbox"]
+shape = SubResource("CircleShape2D_sglur")
+disabled = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="WeaponHitbox/CollisionShape2D"]
+position = Vector2(5.9604645e-08, 1.1920929e-07)
+rotation = -0.8052835
+scale = Vector2(0.5010163, 0.9470287)
+skew = 0.016783476
+sprite_frames = SubResource("SpriteFrames_bls4j")
+animation = &"attack"
+frame = 2
+frame_progress = 1.0
+
+[node name="AttackTimer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+
+[connection signal="timeout" from="AttackTimer" to="." method="_on_attack_timer_timeout"]
