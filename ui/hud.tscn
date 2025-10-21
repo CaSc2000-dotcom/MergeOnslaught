@@ -1,0 +1,93 @@
+[gd_scene load_steps=4 format=3 uid="uid://snfhdfwl2v3"]
+
+[ext_resource type="Script" uid="uid://7rkhby28khai" path="res://ui/hud.gd" id="1_rbyyf"]
+[ext_resource type="FontFile" uid="uid://cj78rct28t8at" path="res://assets/ui/fonts/IMMORTAL.ttf" id="2_276te"]
+[ext_resource type="Texture2D" uid="uid://cuooubfkidolf" path="res://assets/ui/background/Background.png" id="2_546lt"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_rbyyf")
+
+[node name="Background" type="TextureRect" parent="."]
+visible = false
+offset_left = -4.425
+offset_top = -380.0
+offset_right = 923.575
+offset_bottom = 413.0
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("2_546lt")
+
+[node name="ScoreLabel" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.5
+offset_top = 20.0
+offset_right = 20.5
+offset_bottom = 53.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("2_276te")
+theme_override_font_sizes/font_size = 26
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Message" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -24.5
+offset_right = 360.0
+offset_bottom = 24.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.66560394, 1.961328e-06, 4.3317675e-07, 1)
+theme_override_fonts/font = ExtResource("2_276te")
+theme_override_font_sizes/font_size = 64
+text = "Merge Onslaught"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Subtitle" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -67.0
+offset_top = 35.434998
+offset_right = 67.0
+offset_bottom = 58.434998
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.76381624, 0.50590885, 0.5389904, 1)
+theme_override_fonts/font = ExtResource("2_276te")
+text = "By Caleb Schmid"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StartButton" type="Button" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -220.0
+offset_right = 100.0
+offset_bottom = -120.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("2_276te")
+theme_override_font_sizes/font_size = 35
+text = "Start"
+
+[node name="MessageTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[connection signal="pressed" from="StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="timeout" from="MessageTimer" to="." method="_on_message_timer_timeout"]
