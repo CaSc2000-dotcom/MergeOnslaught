@@ -7,6 +7,7 @@ TinyTown: https://kenney.nl/assets/tiny-town
 The Adventurer - Female Character Asset: https://sscary.itch.io/the-adventurer-female
 Tiny RPG Character Asset Pack: https://zerie.itch.io/tiny-rpg-character-asset-pack
 Basic Pixel Health bar and Scroll bar: https://bdragon1727.itch.io/basic-pixel-health-bar-and-scroll-bar
+IMMORTAL font by Apostrophic Labs: https://www.1001freefonts.com/immortal.font
 
 # Overview
 

@@ -13,18 +13,16 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 
-func _physics_process(delta: float) -> void:
-	if player.visible: # Make sure the player exists before trying to move
+func _physics_process(_delta: float) -> void:
+	if player.visible:
 		# Calculate the direction from the mob to the player
 		var direction: Vector2 = (player.global_position - self.global_position).normalized()
-		
 		# Set the body's linear velocity directly
 		linear_velocity = direction * speed
-		
 		_update_animation()
 
 
