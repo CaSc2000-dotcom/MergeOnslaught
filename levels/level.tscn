@@ -239,9 +239,12 @@ stream = SubResource("AudioStreamOggVorbis_safpt")
 [node name="GameMusic" type="AudioStreamPlayer2D" parent="."]
 stream = SubResource("AudioStreamOggVorbis_gjl0y")
 
+[node name="Leaderboard" type="HTTPRequest" parent="."]
+
 [connection signal="body_entered" from="Player" to="Player" method="_on_body_entered"]
 [connection signal="hit" from="Player" to="." method="game_over"]
 [connection signal="start_game" from="Player/Camera2D/HUD" to="." method="new_game"]
 [connection signal="timeout" from="MobTimer" to="." method="_on_mob_timer_timeout"]
 [connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
 [connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="request_completed" from="Leaderboard" to="." method="_on_leaderboard_request_completed"]
