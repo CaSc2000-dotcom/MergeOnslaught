@@ -25,12 +25,14 @@ func show_message(text: String) -> void:
 	$MessageTimer.start()
 
 
-# Shows the game over screen
+# Shows the game over screen (modified to not show start button)
 func show_game_over() -> void:
 	show_message("Game Over")
-	# Wait until the MessageTimer has counted downz
-	await $MessageTimer.timeout
-	
+	# Don't show the start button here anymore - leaderboard will handle continuing
+
+
+# Shows the start button (called from level after leaderboard)
+func show_start_button() -> void:
 	$Message.text = "Merge Onslaught"
 	$Message.show()
 	# Make a one-shot timer and wait for it to finish

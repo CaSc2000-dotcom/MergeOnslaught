@@ -4,9 +4,11 @@
 
 extends Node2D
 
-
 @export var mob_scene: PackedScene
+
 var score: int
+var leaderboard_ui: CanvasLayer
+var admin_panel: CanvasLayer
 
 
 # Called when the node enters the scene tree for the first time.
@@ -14,6 +16,37 @@ func _ready() -> void:
 	$MenuMusic.play()
 	$Player/Camera2D/HUD/Background.show()
 	$Player/Camera2D/HUD/Subtitle.show()
+	
+	# Get leaderboard UI manually
+	leaderboard_ui = $Player/Camera2D/LeaderboardUI
+	print("LeaderboardUI found: ", leaderboard_ui != null)
+	
+	# Get admin panel
+	admin_panel = $Player/Camera2D/AdminPanel
+	print("AdminPanel found: ", admin_panel != null)
+	
+	# Connect leaderboard UI signal
+	if leaderboard_ui:
+		leaderboard_ui.continue_pressed.connect(_on_leaderboard_continue_pressed)
+	else:
+		print("ERROR: Could not find LeaderboardUI at path: Player/Camera2D/LeaderboardUI")
+	
+	# Connect admin panel signal
+	if admin_panel:
+		admin_panel.closed.connect(_on_admin_panel_closed)
+
+
+# Handle secret admin key combination (Ctrl + Shift + A)
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed:
+		if event.ctrl_pressed and event.shift_pressed and event.keycode == KEY_A:
+			if admin_panel:
+				admin_panel.show_admin_panel()
+
+
+func _on_admin_panel_closed() -> void:
+	# Resume game or return to normal state
+	pass
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -23,15 +56,31 @@ func _process(_delta: float) -> void:
 
 # Initiates Game Over sequence
 func game_over() -> void:
+	print("=== game_over called, score: ", score)
 	$ScoreTimer.stop()
 	$MobTimer.stop()
 	$GameMusic.stop()
 	
 	$Player/Camera2D/HUD.show_game_over()
 	
+	print("Waiting for message timer...")
 	await $Player/Camera2D/HUD/MessageTimer.timeout
+	print("Message timer finished, showing leaderboard")
+	
+	# Show leaderboard with current score
+	print("leaderboard_ui is: ", leaderboard_ui)
+	print("leaderboard_ui null? ", leaderboard_ui == null)
+	if leaderboard_ui:
+		leaderboard_ui.show_leaderboard(score)
+	else:
+		print("ERROR: leaderboard_ui is null!")
+
+
+# Handle leaderboard continue button
+func _on_leaderboard_continue_pressed() -> void:
 	$Player/Camera2D/HUD/Background.show()
 	$Player/Camera2D/HUD/Subtitle.show()
+	$Player/Camera2D/HUD.show_start_button()  # Use new method instead of directly showing button
 	$MenuMusic.play()
 
 

@@ -1,0 +1,108 @@
+[gd_scene load_steps=3 format=3 uid="uid://bag0c01yu0xog"]
+
+[ext_resource type="Script" uid="uid://cexld75fi0n3a" path="res://ui/admin/admin_panel.gd" id="1_admin"]
+[ext_resource type="FontFile" uid="uid://cj78rct28t8at" path="res://assets/ui/fonts/IMMORTAL.ttf" id="2_admin"]
+
+[node name="AdminPanel" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_admin")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.8)
+
+[node name="LoginPanel" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LoginPanel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="TitleLabel" type="Label" parent="LoginPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_admin")
+theme_override_font_sizes/font_size = 32
+text = "ADMIN LOGIN"
+horizontal_alignment = 1
+
+[node name="EmailInput" type="LineEdit" parent="LoginPanel/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Email"
+
+[node name="PasswordInput" type="LineEdit" parent="LoginPanel/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Password"
+secret = true
+
+[node name="LoginButton" type="Button" parent="LoginPanel/VBoxContainer"]
+layout_mode = 2
+text = "Login"
+
+[node name="StatusLabel" type="Label" parent="LoginPanel/VBoxContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="ManagementPanel" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -500.0
+offset_top = -350.0
+offset_right = 500.0
+offset_bottom = 350.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ManagementPanel"]
+layout_mode = 2
+
+[node name="TopBar" type="HBoxContainer" parent="ManagementPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="ManagementPanel/VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_admin")
+theme_override_font_sizes/font_size = 28
+text = "LEADERBOARD ADMIN"
+vertical_alignment = 1
+
+[node name="RefreshButton" type="Button" parent="ManagementPanel/VBoxContainer/TopBar"]
+layout_mode = 2
+text = "Refresh"
+
+[node name="LogoutButton" type="Button" parent="ManagementPanel/VBoxContainer/TopBar"]
+layout_mode = 2
+text = "Logout"
+
+[node name="CloseButton" type="Button" parent="ManagementPanel/VBoxContainer/TopBar"]
+layout_mode = 2
+text = "Close"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ManagementPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+vertical_scroll_mode = 2
+
+[node name="LeaderboardList" type="VBoxContainer" parent="ManagementPanel/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
