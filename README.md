@@ -17,10 +17,15 @@ Menu Background: https://edermunizz.itch.io/free-pixel-art-forest
 
 # Overview
 
+The software I made was a video game from last module, and it incorporates a cloud database through Supabase that allows users to post their scores to a public leaderboard. As a software engineer, I've never tried using databases of any kind, and by following through with this assignment, I've gained a lot of experience about how databases in the cloud can be utilized in a streamlined and user-friendly way.
+
+I made this software because I felt that my game was lacking (in more ways than one), and I felt that by including a leaderboard, it will give an edge of competition to spice up the gameplay.
+
+[Software Demo Video](https://youtu.be/pku5_7JMaco)
+
 ### ⬇️[Downlaods/Releases](https://github.com/CaSc2000-dotcom/MergeOnslaught/releases/)⬇️
 
 You are an adventurer and have to survive the onslaught of orcs coming from all angles! 
-[Software Demo Video](https://youtu.be/pku5_7JMaco)
 
 # Cloud Database
 
