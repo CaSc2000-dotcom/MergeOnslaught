@@ -7,7 +7,8 @@ extends Node2D
 @export var mob_scene: PackedScene
 
 var score: int
-var leaderboard_ui: CanvasLayer  # Changed from Control to CanvasLayer
+var leaderboard_ui: CanvasLayer
+var admin_panel: CanvasLayer
 
 
 # Called when the node enters the scene tree for the first time.
@@ -20,11 +21,32 @@ func _ready() -> void:
 	leaderboard_ui = $Player/Camera2D/LeaderboardUI
 	print("LeaderboardUI found: ", leaderboard_ui != null)
 	
+	# Get admin panel
+	admin_panel = $Player/Camera2D/AdminPanel
+	print("AdminPanel found: ", admin_panel != null)
+	
 	# Connect leaderboard UI signal
 	if leaderboard_ui:
 		leaderboard_ui.continue_pressed.connect(_on_leaderboard_continue_pressed)
 	else:
 		print("ERROR: Could not find LeaderboardUI at path: Player/Camera2D/LeaderboardUI")
+	
+	# Connect admin panel signal
+	if admin_panel:
+		admin_panel.closed.connect(_on_admin_panel_closed)
+
+
+# Handle secret admin key combination (Ctrl + Shift + A)
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed:
+		if event.ctrl_pressed and event.shift_pressed and event.keycode == KEY_A:
+			if admin_panel:
+				admin_panel.show_admin_panel()
+
+
+func _on_admin_panel_closed() -> void:
+	# Resume game or return to normal state
+	pass
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
