@@ -22,7 +22,6 @@ Menu Background: https://edermunizz.itch.io/free-pixel-art-forest
 You are an adventurer and have to survive the onslaught of orcs coming from all angles! 
 [Software Demo Video](https://youtu.be/pku5_7JMaco)
 
-### Controls:
 # Cloud Database
 
 The cloud database I chose was Supabase. It has built-in features for PostGres database creating and maniuplation as well as user authentication.
