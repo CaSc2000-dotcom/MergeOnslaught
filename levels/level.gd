@@ -4,24 +4,10 @@
 
 extends Node2D
 
-
-@onready var http_request: Node = $Leaderboard
-# different urls correspond to different PostGres commands
-var supabase_url: Dictionary = {
-	"read_all_rows": "https://ixgfzxmweunyfyfdtwvi.supabase.co/rest/v1/leaderboard?select=*",
-	"insert_a_row":  "https://ixgfzxmweunyfyfdtwvi.supabase.co/rest/v1/leaderboard"
-}
-# safe public api key
-var api_key: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Z2Z6eG13ZXVueWZ5ZmR0d3ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2MTUxMTMsImV4cCI6MjA3NzE5MTExM30.5M3zeVhFsMUwDb1SuW4GKuAQY8ihoYqShIvNGbcTSgg"
-# idk what headers do yet
-var headers: Array = [
-	"apikey: " + api_key,
-	"Authorization: Bearer " + api_key,
-	"Content-Type: application/json" # (Needed for insert/modify)
-]
-
 @export var mob_scene: PackedScene
+
 var score: int
+var leaderboard_ui: CanvasLayer  # Changed from Control to CanvasLayer
 
 
 # Called when the node enters the scene tree for the first time.
@@ -30,7 +16,15 @@ func _ready() -> void:
 	$Player/Camera2D/HUD/Background.show()
 	$Player/Camera2D/HUD/Subtitle.show()
 	
-	get_scores() # TODO: implement within a UI element
+	# Get leaderboard UI manually
+	leaderboard_ui = $Player/Camera2D/LeaderboardUI
+	print("LeaderboardUI found: ", leaderboard_ui != null)
+	
+	# Connect leaderboard UI signal
+	if leaderboard_ui:
+		leaderboard_ui.continue_pressed.connect(_on_leaderboard_continue_pressed)
+	else:
+		print("ERROR: Could not find LeaderboardUI at path: Player/Camera2D/LeaderboardUI")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -40,20 +34,32 @@ func _process(_delta: float) -> void:
 
 # Initiates Game Over sequence
 func game_over() -> void:
+	print("=== game_over called, score: ", score)
 	$ScoreTimer.stop()
 	$MobTimer.stop()
 	$GameMusic.stop()
 	
 	$Player/Camera2D/HUD.show_game_over()
 	
-	# submit_new_score("reto", score) # TODO: implement within a UI element
-	
+	print("Waiting for message timer...")
 	await $Player/Camera2D/HUD/MessageTimer.timeout
+	print("Message timer finished, showing leaderboard")
+	
+	# Show leaderboard with current score
+	print("leaderboard_ui is: ", leaderboard_ui)
+	print("leaderboard_ui null? ", leaderboard_ui == null)
+	if leaderboard_ui:
+		leaderboard_ui.show_leaderboard(score)
+	else:
+		print("ERROR: leaderboard_ui is null!")
+
+
+# Handle leaderboard continue button
+func _on_leaderboard_continue_pressed() -> void:
 	$Player/Camera2D/HUD/Background.show()
 	$Player/Camera2D/HUD/Subtitle.show()
+	$Player/Camera2D/HUD.show_start_button()  # Use new method instead of directly showing button
 	$MenuMusic.play()
-	
-	get_scores() # remove this eventually
 
 
 # Starts a new game
@@ -95,54 +101,3 @@ func _on_score_timer_timeout() -> void:
 func _on_start_timer_timeout() -> void:
 	$MobTimer.start()
 	$ScoreTimer.start()
-
-
-# Fetches the scores
-func get_scores() -> void:
-	var error: Error = http_request.request(supabase_url["read_all_rows"], headers)
-	if error != OK:
-		print("Error starting the GET request")
-
-# Submits a new score that didn't exist before
-func submit_new_score(username: String, user_score: int) -> void:
-	# Headers for POST
-	var post_headers: Array = [
-		headers[0],
-		headers[1],
-		headers[2],
-		"Prefer: return=minimal" # Good practice: tells Supabase we don't need data back
-	]
-	
-	# Prepares data in a format it can send to DB
-	var data_to_send: Dictionary = { "username": username, "score": user_score }
-	var json_string_body: String = JSON.stringify(data_to_send)
-	# Sent request with METHOD_POST
-	var error: Error = http_request.request(
-		supabase_url["insert_a_row"], 
-		post_headers, 
-		HTTPClient.METHOD_POST,
-		json_string_body
-	)
-	if error != OK:
-		print("Error starting the POST request")
-
-# What to do based on what request was completed
-func _on_leaderboard_request_completed(_result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
-	
-	# METHOD_GET
-	if response_code == 200:
-		var json_data: Variant = JSON.parse_string(body.get_string_from_utf8())
-		if json_data:
-			print("Scores: ", json_data)
-			# code to display it
-		else:
-			print("Error parsing JSON, or no data returned")
-	
-	# METHOD_POST
-	elif response_code == 201:
-		print("Scores submitted successfully!")
-	
-	# ERROR
-	else:
-		print("An error occurred. Response code: ", response_code)
-		print("Response body: ", body.get_string_from_utf8())

@@ -1,10 +1,11 @@
-[gd_scene load_steps=13 format=4 uid="uid://dpgvq18eof1l1"]
+[gd_scene load_steps=14 format=4 uid="uid://dpgvq18eof1l1"]
 
 [ext_resource type="Script" uid="uid://c02r0g35ur00c" path="res://levels/level.gd" id="1_5mrsh"]
 [ext_resource type="PackedScene" uid="uid://bpcv3x0h410kk" path="res://entities/player/player.tscn" id="1_80vhd"]
 [ext_resource type="Texture2D" uid="uid://c5x2vvn7e1ujt" path="res://assets/tilemaps/tilemap_packed.png" id="1_hjsbj"]
 [ext_resource type="PackedScene" uid="uid://bfmlr6qvoij7x" path="res://entities/mob/mob.tscn" id="2_safpt"]
 [ext_resource type="PackedScene" uid="uid://snfhdfwl2v3" path="res://ui/hud.tscn" id="5_safpt"]
+[ext_resource type="PackedScene" uid="uid://fn60wxomvnu" path="res://ui/leaderboard/leaderboard_ui.tscn" id="6_gjl0y"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cwqvt"]
 texture = ExtResource("1_hjsbj")
@@ -212,8 +213,6 @@ camera = NodePath("Camera2D")
 zoom = Vector2(2.5, 2.5)
 position_smoothing_enabled = true
 
-[node name="HUD" parent="Player/Camera2D" instance=ExtResource("5_safpt")]
-
 [node name="SpawnPath" type="Path2D" parent="Player/Camera2D"]
 position = Vector2(5.8462797e-06, 0)
 scale = Vector2(0.7662836, 0.7662836)
@@ -221,6 +220,10 @@ curve = SubResource("Curve2D_hjsbj")
 
 [node name="SpawnLocation" type="PathFollow2D" parent="Player/Camera2D/SpawnPath"]
 position = Vector2(-304, -192)
+
+[node name="HUD" parent="Player/Camera2D" instance=ExtResource("5_safpt")]
+
+[node name="LeaderboardUI" parent="Player/Camera2D" instance=ExtResource("6_gjl0y")]
 
 [node name="MobTimer" type="Timer" parent="."]
 wait_time = 2.5
@@ -235,11 +238,11 @@ one_shot = true
 
 [node name="MenuMusic" type="AudioStreamPlayer2D" parent="."]
 stream = SubResource("AudioStreamOggVorbis_safpt")
+volume_db = -10.0
 
 [node name="GameMusic" type="AudioStreamPlayer2D" parent="."]
 stream = SubResource("AudioStreamOggVorbis_gjl0y")
-
-[node name="Leaderboard" type="HTTPRequest" parent="."]
+volume_db = -10.0
 
 [connection signal="body_entered" from="Player" to="Player" method="_on_body_entered"]
 [connection signal="hit" from="Player" to="." method="game_over"]
@@ -247,4 +250,3 @@ stream = SubResource("AudioStreamOggVorbis_gjl0y")
 [connection signal="timeout" from="MobTimer" to="." method="_on_mob_timer_timeout"]
 [connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
 [connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
-[connection signal="request_completed" from="Leaderboard" to="." method="_on_leaderboard_request_completed"]
