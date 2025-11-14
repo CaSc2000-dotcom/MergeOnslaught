@@ -7,6 +7,8 @@ extends Node2D
 @export var mob_scene: PackedScene
 
 var score: int
+var last_milestone: int = 0  # Track the last 1000 milestone we passed
+
 var leaderboard_ui: CanvasLayer
 var admin_panel: CanvasLayer
 
@@ -42,20 +44,26 @@ func _input(event: InputEvent) -> void:
 		if event.ctrl_pressed and event.shift_pressed and event.keycode == KEY_A:
 			if admin_panel:
 				admin_panel.show_admin_panel()
+				$SFX/MenuBlip.play()
+				
 
 
 func _on_admin_panel_closed() -> void:
 	# Resume game or return to normal state
-	pass
+	$SFX/MenuBlip.play()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	pass
+	var current_milestone: int = int(score / 1000)
+	if current_milestone > last_milestone:
+		last_milestone = current_milestone
+		$SFX/ScoreMilestone.play()
 
 
 # Initiates Game Over sequence
 func game_over() -> void:
+	$SFX/PlayerDied.play()
 	print("=== game_over called, score: ", score)
 	$ScoreTimer.stop()
 	$MobTimer.stop()
@@ -78,6 +86,7 @@ func game_over() -> void:
 
 # Handle leaderboard continue button
 func _on_leaderboard_continue_pressed() -> void:
+	$SFX/MenuBlip.play()
 	$Player/Camera2D/HUD/Background.show()
 	$Player/Camera2D/HUD/Subtitle.show()
 	$Player/Camera2D/HUD.show_start_button()  # Use new method instead of directly showing button
@@ -86,6 +95,7 @@ func _on_leaderboard_continue_pressed() -> void:
 
 # Starts a new game
 func new_game() -> void:
+	$SFX/MenuBlip.play()
 	score = 0
 	$Player/Camera2D/HUD/Background.hide()
 	$Player/Camera2D/HUD/Subtitle.hide()
@@ -111,11 +121,18 @@ func _on_mob_timer_timeout() -> void:
 	mob.global_position = mob_spawn_location.global_position
 	# Spawn the mob
 	add_child(mob)
+	# # Connect the mob's died signal to score function
+	mob.died.connect(_on_mob_died)
+
+
+func _on_mob_died() -> void:
+	score += 15
+	print("Incremented score.")
 
 
 # Increments the score by 1 every second
 func _on_score_timer_timeout() -> void:
-	score += 1
+	score += 10
 	$Player/Camera2D/HUD.update_score(score)
 
 

@@ -1,0 +1,32 @@
+[gd_scene load_steps=8 format=3 uid="uid://bvylsusv5n0lc"]
+
+[ext_resource type="AudioStream" uid="uid://dwf76h68v6bhs" path="res://assets/sfx/coin_3.wav" id="1_1neif"]
+[ext_resource type="AudioStream" uid="uid://dq0kyn8yqn6av" path="res://assets/sfx/ghost.wav" id="2_h2e5c"]
+[ext_resource type="AudioStream" uid="uid://c84d6r4erxlqn" path="res://assets/sfx/explosion_small.wav" id="3_kcfkd"]
+[ext_resource type="AudioStream" uid="uid://docflnnwghwd2" path="res://assets/sfx/hurt.wav" id="4_ayd4k"]
+[ext_resource type="AudioStream" uid="uid://c5rg67uas4yw3" path="res://assets/sfx/lose.wav" id="5_ce83o"]
+[ext_resource type="AudioStream" uid="uid://bjg0ian7w7wsx" path="res://assets/sfx/menu_blip.wav" id="6_y1wmd"]
+[ext_resource type="AudioStream" uid="uid://cgrqooi7740si" path="res://assets/sfx/punch.wav" id="7_dxfmy"]
+
+[node name="SFX" type="Node"]
+
+[node name="ScoreMilestone" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("1_1neif")
+
+[node name="MobDied" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_h2e5c")
+
+[node name="MobHurt" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_kcfkd")
+
+[node name="PlayerHurt" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_ayd4k")
+
+[node name="PlayerDied" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_ce83o")
+
+[node name="MenuBlip" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_y1wmd")
+
+[node name="PlayerAttack" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("7_dxfmy")

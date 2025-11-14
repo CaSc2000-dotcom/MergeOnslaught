@@ -64,6 +64,7 @@ func take_damage(damage: float) -> void:
 		is_dead = true
 		die()
 	else: # didn't die
+		$SFX/MobHurt.play()
 		is_hurting = true
 		$AnimatedSprite2D.play("hurt")
 		await $AnimatedSprite2D.animation_finished
@@ -72,6 +73,7 @@ func take_damage(damage: float) -> void:
 
 # Mob death sequence
 func die() -> void:
+	$SFX/MobDied.play()
 	$CollisionShape2D.set_deferred("disabled", true)
 	linear_velocity = Vector2.ZERO
 	emit_signal("died")
@@ -79,4 +81,4 @@ func die() -> void:
 	$AnimatedSprite2D.play("death")
 	await $AnimatedSprite2D.animation_finished
 	await get_tree().create_timer(2.0).timeout
-	queue_free()
+	call_deferred("queue_free")

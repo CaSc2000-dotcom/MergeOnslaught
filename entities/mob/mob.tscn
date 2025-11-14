@@ -1,7 +1,8 @@
-[gd_scene load_steps=27 format=3 uid="uid://bfmlr6qvoij7x"]
+[gd_scene load_steps=28 format=3 uid="uid://bfmlr6qvoij7x"]
 
 [ext_resource type="Texture2D" uid="uid://2ktwbpbiicim" path="res://assets/mob/Orc.png" id="1_6qa3q"]
 [ext_resource type="Script" uid="uid://cfbp1sqllqong" path="res://entities/mob/mob.gd" id="1_qn42p"]
+[ext_resource type="PackedScene" uid="uid://bvylsusv5n0lc" path="res://managers/sfx.tscn" id="3_xiqil"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qn42p"]
 atlas = ExtResource("1_6qa3q")
@@ -188,6 +189,7 @@ height = 15.466667
 collision_mask = 0
 gravity_scale = 0.0
 script = ExtResource("1_qn42p")
+speed = 75.0
 metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -201,3 +203,5 @@ scale = Vector2(1.5, 1.5)
 shape = SubResource("CapsuleShape2D_6qa3q")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
+[node name="SFX" parent="." instance=ExtResource("3_xiqil")]

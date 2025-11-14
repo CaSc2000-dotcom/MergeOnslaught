@@ -5,6 +5,8 @@ extends CanvasLayer
 
 signal closed
 
+var is_clicking_outside: bool = false
+
 @onready var login_panel: Control = $LoginPanel
 @onready var management_panel: Control = $ManagementPanel
 @onready var email_input: LineEdit = $LoginPanel/VBoxContainer/EmailInput
@@ -41,6 +43,23 @@ func _ready() -> void:
 	
 	# Start with login panel visible
 	_show_login_panel()
+
+
+# Add this new function to handle input
+func _input(event: InputEvent) -> void:
+	if not visible:
+		return
+	
+	# Only handle mouse clicks
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		# Check if click is outside the login panel
+		if login_panel.visible:
+			var panel_rect: Rect2 = login_panel.get_global_rect()
+			var mouse_pos: Vector2 = event.position
+			
+			if not panel_rect.has_point(mouse_pos):
+				visible = false
+				emit_signal("closed")
 
 
 # Show the admin panel
@@ -151,9 +170,9 @@ func _create_leaderboard_entry(entry: Dictionary) -> void:
 	
 	# Score
 	var score_input: SpinBox = SpinBox.new()
-	score_input.value = entry["score"]
 	score_input.min_value = 0
 	score_input.max_value = 999999
+	score_input.value = entry["score"]  # Set value AFTER max_value
 	score_input.custom_minimum_size = Vector2(100, 0)
 	
 	# Update button

@@ -49,6 +49,7 @@ func update_score(score: int) -> void:
 func _on_start_button_pressed() -> void:
 	$StartButton.hide()
 	start_game.emit()
+	
 
 
 # Hides the Message when the MessageTimer runs out

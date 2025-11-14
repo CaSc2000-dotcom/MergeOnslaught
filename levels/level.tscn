@@ -1,12 +1,13 @@
-[gd_scene load_steps=15 format=4 uid="uid://dpgvq18eof1l1"]
+[gd_scene load_steps=16 format=4 uid="uid://dpgvq18eof1l1"]
 
 [ext_resource type="Script" uid="uid://c02r0g35ur00c" path="res://levels/level.gd" id="1_5mrsh"]
 [ext_resource type="PackedScene" uid="uid://bpcv3x0h410kk" path="res://entities/player/player.tscn" id="1_80vhd"]
-[ext_resource type="Texture2D" uid="uid://c5x2vvn7e1ujt" path="res://assets/tilemaps/tilemap_packed.png" id="1_hjsbj"]
+[ext_resource type="Texture2D" uid="uid://odffugoawwrv" path="res://assets/tilemaps/tilemap_packed.png" id="1_hjsbj"]
 [ext_resource type="PackedScene" uid="uid://bfmlr6qvoij7x" path="res://entities/mob/mob.tscn" id="2_safpt"]
 [ext_resource type="PackedScene" uid="uid://snfhdfwl2v3" path="res://ui/hud.tscn" id="5_safpt"]
 [ext_resource type="PackedScene" uid="uid://fn60wxomvnu" path="res://ui/leaderboard/leaderboard_ui.tscn" id="6_gjl0y"]
-[ext_resource type="PackedScene" path="res://ui/admin/admin_panel.tscn" id="7_vnv7o"]
+[ext_resource type="PackedScene" uid="uid://bag0c01yu0xog" path="res://ui/admin/admin_panel.tscn" id="7_vnv7o"]
+[ext_resource type="PackedScene" uid="uid://bvylsusv5n0lc" path="res://managers/sfx.tscn" id="8_d5x7l"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cwqvt"]
 texture = ExtResource("1_hjsbj")
@@ -229,7 +230,7 @@ position = Vector2(-304, -192)
 [node name="AdminPanel" parent="Player/Camera2D" instance=ExtResource("7_vnv7o")]
 
 [node name="MobTimer" type="Timer" parent="."]
-wait_time = 2.5
+wait_time = 0.5
 
 [node name="ScoreTimer" type="Timer" parent="."]
 
@@ -246,6 +247,8 @@ volume_db = -10.0
 [node name="GameMusic" type="AudioStreamPlayer2D" parent="."]
 stream = SubResource("AudioStreamOggVorbis_gjl0y")
 volume_db = -10.0
+
+[node name="SFX" parent="." instance=ExtResource("8_d5x7l")]
 
 [connection signal="body_entered" from="Player" to="Player" method="_on_body_entered"]
 [connection signal="hit" from="Player" to="." method="game_over"]

@@ -1,9 +1,10 @@
-[gd_scene load_steps=51 format=3 uid="uid://bpcv3x0h410kk"]
+[gd_scene load_steps=52 format=3 uid="uid://bpcv3x0h410kk"]
 
 [ext_resource type="Script" uid="uid://bd48wlyfx15bd" path="res://entities/player/player.gd" id="1_abrql"]
 [ext_resource type="Texture2D" uid="uid://d1n28mgjihdbt" path="res://assets/player/Idle/Idle.png" id="2_abrql"]
 [ext_resource type="Texture2D" uid="uid://knmee3tat6s8" path="res://assets/player/Walk/walk.png" id="3_sglur"]
 [ext_resource type="Texture2D" uid="uid://bjudtaccsd40x" path="res://assets/player/Attack/Soldier-Attack01_Effect.png" id="4_bls4j"]
+[ext_resource type="PackedScene" uid="uid://bvylsusv5n0lc" path="res://managers/sfx.tscn" id="5_fkugw"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sglur"]
 radius = 4.0
@@ -383,5 +384,7 @@ frame_progress = 1.0
 [node name="AttackTimer" type="Timer" parent="."]
 wait_time = 0.2
 one_shot = true
+
+[node name="SFX" parent="." instance=ExtResource("5_fkugw")]
 
 [connection signal="timeout" from="AttackTimer" to="." method="_on_attack_timer_timeout"]

@@ -20,6 +20,8 @@ var hit_list: Array[Node2D] = [] # Stores all mobs hit during a single swing
 @onready var hitbox_shape: Node = $WeaponHitbox/CollisionShape2D
 var facing_right: bool
 
+var health: int
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -89,15 +91,35 @@ func _switchAnimation() -> void:
 
 # Dies when mob enters body
 func _on_body_entered(_body: Node2D) -> void:
+	health -= 10
+	if health >= 0:
+		start_flash()
+		$SFX/PlayerHurt.play()
+		return
 	can_move = false
 	hide() # Player disappears after being hit.
 	hit.emit()
 	# Must be deferred as we can't change physics properties on a physics callback.
 	$CollisionShape2D.set_deferred("disabled", true)
+	$SFX/PlayerDied.play()
+
+
+func start_flash() -> void:
+	$CollisionShape2D.set_deferred("disabled", true)
+	var tween: Tween = create_tween()
+	# Flash between red and white 6 times over 2 seconds
+	for i in range(10):
+		tween.tween_property($AnimatedSprite2D, "modulate", Color.RED, 0.05)
+		tween.tween_property($AnimatedSprite2D, "modulate", Color.WHITE, 0.05)
+	# Make sure it ends on normal color
+	tween.tween_property($AnimatedSprite2D, "modulate", Color.WHITE, 0.0)
+	
+	tween.tween_callback(func() -> void: $CollisionShape2D.disabled = false)
 
 
 # Starting sequence
 func start(pos: Vector2) -> void:
+	health = 30
 	position = pos
 	can_move = true
 	show()
@@ -124,6 +146,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				$WeaponHitbox.position = weapon_pos
 			$WeaponHitbox/CollisionShape2D/AnimatedSprite2D.flip_h = false if facing_right else true
 			
+			$SFX/PlayerAttack.play()
 			# Play attack animation
 			$WeaponHitbox.show()
 			$WeaponHitbox/CollisionShape2D/AnimatedSprite2D.play("attack")
