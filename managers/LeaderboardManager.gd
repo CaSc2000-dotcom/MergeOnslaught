@@ -14,22 +14,23 @@ const MAX_LEADERBOARD_SIZE: int = 10
 
 var supabase_url: Dictionary = {
 	"read_top_scores": "https://ixgfzxmweunyfyfdtwvi.supabase.co/rest/v1/leaderboard?select=*&order=score.desc&limit=10",
-	# Base URL for the 'leaderboard' table. Used for POST, PATCH, and DELETE.
 	"base_table_url": "https://ixgfzxmweunyfyfdtwvi.supabase.co/rest/v1/leaderboard"
 }
 
 var api_key: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Z2Z6eG13ZXVueWZ5ZmR0d3ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2MTUxMTMsImV4cCI6MjA3NzE5MTExM30.5M3zeVhFsMUwDb1SuW4GKuAQY8ihoYqShIvNGbcTSgg"
 
-var base_headers: Array = [
+# Changed to PackedStringArray for strict compatibility with HTTPRequest
+var base_headers: PackedStringArray = [
 	"apikey: " + api_key,
 	"Authorization: Bearer " + api_key,
-	"Content-Type: application/json",
-	"Accept-Encoding: identity"  # ADD THIS LINE - tells server not to compress
+	"Content-Type: application/json"
 ]
 
 var http_request: HTTPRequest
 var current_request_type: String = ""  # "GET", "POST", "PATCH", or "DELETE"
 
+# Reference to keep the JS callback alive (nullable because it's only used on Web)
+var _js_callback_ref: JavaScriptObject = null 
 
 func _ready() -> void:
 	# Create HTTPRequest node
@@ -37,41 +38,90 @@ func _ready() -> void:
 	add_child(http_request)
 	http_request.request_completed.connect(_on_request_completed)
 	
-	# Add timeout settings for web export
-	http_request.timeout = 10.0  # 10 seconds
+	if OS.has_feature("web"):
+		_setup_web_fetch()
+	else:
+		# Add timeout settings for desktop/mobile
+		http_request.timeout = 10.0
 
+# Setup JavaScript bridge for Web exports to avoid GZIP double-decompression
+func _setup_web_fetch() -> void:
+	var js_code: String = """
+		window.godot_supa_fetch = function(url, method, headers_json, body, callback) {
+			var headers_dict = JSON.parse(headers_json);
+			var opts = {
+				method: method,
+				headers: headers_dict
+			};
+			if (body) opts.body = body;
+			
+			fetch(url, opts).then(response => {
+				response.text().then(text => {
+					// Pass status and text back to Godot
+					callback(response.status, text);
+				});
+			}).catch(error => {
+				console.error("Supabase Fetch Error:", error);
+				callback(0, "");
+			});
+		}
+	"""
+	JavaScriptBridge.eval(js_code)
+	_js_callback_ref = JavaScriptBridge.create_callback(_on_web_fetch_completed)
+
+# Callback received from JavaScript
+func _on_web_fetch_completed(args: Array) -> void:
+	if args.size() < 2:
+		return
+		
+	var status_code: int = int(args[0])
+	var response_text: String = str(args[1])
+	var body_bytes: PackedByteArray = response_text.to_utf8_buffer()
+	
+	# Manually trigger the handler with the data from JS
+	_on_request_completed(0, status_code, PackedStringArray(), body_bytes)
+
+# Unified request function that handles both Web and Desktop
+func _make_request(url: String, headers: PackedStringArray, method: int, body: String = "") -> void:
+	if OS.has_feature("web"):
+		var window: JavaScriptObject = JavaScriptBridge.get_interface("window")
+		# Convert headers array ["Key: Value"] to Dictionary for JS
+		var headers_dict: Dictionary = {}
+		for h: String in headers:
+			var parts: PackedStringArray = h.split(": ", true, 1)
+			if parts.size() == 2:
+				# Skip Accept-Encoding on web to let browser handle it
+				if parts[0].to_lower() == "accept-encoding":
+					continue
+				headers_dict[parts[0]] = parts[1]
+		
+		if window:
+			# current_request_type is set in the calling functions
+			window.godot_supa_fetch(url, current_request_type, JSON.stringify(headers_dict), body, _js_callback_ref)
+	else:
+		var error: Error = http_request.request(url, headers, method, body)
+		if error != OK:
+			emit_signal("leaderboard_error", "Failed to start " + current_request_type + " request")
+
+# --- Public Functions ---
 
 # Fetch top 10 scores from leaderboard
 func fetch_leaderboard() -> void:
 	current_request_type = "GET"
-	var error: Error = http_request.request(supabase_url["read_top_scores"], base_headers)
-	if error != OK:
-		emit_signal("leaderboard_error", "Failed to start GET request")
-
+	_make_request(supabase_url["read_top_scores"], base_headers, HTTPClient.METHOD_GET)
 
 # Submit a new score to the leaderboard
 func submit_score(username: String, score: int) -> void:
 	print("Submitting score...")
 	current_request_type = "POST"
 	
-	# Public functions use base_headers (anon key)
-	var post_headers: Array = base_headers.duplicate()
+	var post_headers: PackedStringArray = base_headers.duplicate()
 	post_headers.append("Prefer: return=minimal")
 	
 	var data_to_send: Dictionary = {"username": username, "score": score}
 	var json_string: String = JSON.stringify(data_to_send)
 	
-	var error: Error = http_request.request(
-		supabase_url["base_table_url"],
-		post_headers,
-		HTTPClient.METHOD_POST,
-		json_string
-	)
-	
-	if error != OK:
-		emit_signal("score_submitted", false)
-		emit_signal("leaderboard_error", "Failed to start POST request")
-
+	_make_request(supabase_url["base_table_url"], post_headers, HTTPClient.METHOD_POST, json_string)
 
 # Check if a score qualifies for top 10
 func is_top_score(score: int, leaderboard_data: Array) -> bool:
@@ -79,9 +129,9 @@ func is_top_score(score: int, leaderboard_data: Array) -> bool:
 		return true
 	
 	# Check if score is higher than the lowest score
-	var lowest_score: int = leaderboard_data[leaderboard_data.size() - 1]["score"]
+	var lowest_entry: Dictionary = leaderboard_data[leaderboard_data.size() - 1]
+	var lowest_score: int = int(lowest_entry.get("score", 0))
 	return score > lowest_score
-
 
 func update_score(id: int, new_username: String, new_score: int) -> void:
 	print("Modifying score ID: %d" % id)
@@ -94,7 +144,8 @@ func update_score(id: int, new_username: String, new_score: int) -> void:
 	current_request_type = "PATCH"
 	
 	# Add the 'Prefer' header for PATCH
-	var patch_headers: Array = AdminAuth.get_admin_headers()
+	# We assume AdminAuth.get_admin_headers() returns Array or PackedStringArray
+	var patch_headers: PackedStringArray = PackedStringArray(AdminAuth.get_admin_headers())
 	patch_headers.append("Prefer: return=minimal")
 	
 	# Construct the URL to target the specific row by its ID
@@ -104,17 +155,7 @@ func update_score(id: int, new_username: String, new_score: int) -> void:
 	var data_to_send: Dictionary = {"username": new_username, "score": new_score}
 	var json_string: String = JSON.stringify(data_to_send)
 	
-	var error: Error = http_request.request(
-		patch_url,
-		patch_headers,
-		HTTPClient.METHOD_PATCH,
-		json_string
-	)
-	
-	if error != OK:
-		emit_signal("score_modified", false)
-		emit_signal("leaderboard_error", "Failed to start PATCH request")
-
+	_make_request(patch_url, patch_headers, HTTPClient.METHOD_PATCH, json_string)
 
 func delete_score(id: int) -> void:
 	print("Deleting score ID: %d" % id)
@@ -128,24 +169,17 @@ func delete_score(id: int) -> void:
 	current_request_type = "DELETE"
 	
 	# Add the 'Prefer' header for DELETE
-	var delete_headers: Array = AdminAuth.get_admin_headers()
+	var delete_headers: PackedStringArray = PackedStringArray(AdminAuth.get_admin_headers())
 	delete_headers.append("Prefer: return=minimal")
 	
 	# Construct the URL to target the specific row by its ID
 	var delete_url: String = supabase_url["base_table_url"] + "?id=eq." + str(id)
 	
-	var error: Error = http_request.request(
-		delete_url,
-		delete_headers,
-		HTTPClient.METHOD_DELETE
-	)
-	
-	if error != OK:
-		emit_signal("score_deleted", false)
-		emit_signal("leaderboard_error", "Failed to start DELETE request")
+	_make_request(delete_url, delete_headers, HTTPClient.METHOD_DELETE)
 
 
-# Handle HTTP request completion
+# --- Response Handlers ---
+
 func _on_request_completed(_result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
 	# Route the response to the correct handler based on the request type
 	match current_request_type:
@@ -163,12 +197,11 @@ func _on_request_completed(_result: int, response_code: int, _headers: PackedStr
 	# Reset request type
 	current_request_type = ""
 
-
 func _handle_get_response(response_code: int, body: PackedByteArray) -> void:
 	print("=== GET Response Debug ===")
 	print("Response code: ", response_code)
 	print("Body length: ", body.size())
-	print("Body as string: ", body.get_string_from_utf8())
+	# print("Body as string: ", body.get_string_from_utf8()) # Uncomment for debug
 	print("========================")
 	
 	if response_code == 200:
@@ -196,31 +229,23 @@ func _handle_get_response(response_code: int, body: PackedByteArray) -> void:
 	else:
 		emit_signal("leaderboard_error", "GET Error: " + str(response_code))
 
-
 func _handle_post_response(response_code: int, _body: PackedByteArray) -> void:
 	if response_code == 201: # 201 means 'Created'
 		emit_signal("score_submitted", true)
 		# Automatically fetch updated leaderboard
-		# Use call_deferred to wait until the HTTPRequest node is no longer busy.
 		call_deferred("fetch_leaderboard")
 	else:
 		emit_signal("score_submitted", false)
 		emit_signal("leaderboard_error", "POST Error: " + str(response_code))
 
-
-# Handle the response from a PATCH request (modify_score)
 func _handle_patch_response(response_code: int, _body: PackedByteArray) -> void:
 	if response_code == 204: # 204 means 'No Content' (success for minimal return)
 		emit_signal("score_modified", true)
-		# Automatically fetch updated leaderboard
-		# Use call_deferred to wait until the HTTPRequest node is no longer busy.
 		call_deferred("fetch_leaderboard")
 	else:
 		emit_signal("score_modified", false)
 		emit_signal("leaderboard_error", "PATCH Error: " + str(response_code))
 
-
-# Handle the response from a DELETE request (delete_score)
 func _handle_delete_response(response_code: int, _body: PackedByteArray) -> void:
 	if response_code == 204: # 204 means 'No Content' (success for minimal return)
 		emit_signal("score_deleted", true)
