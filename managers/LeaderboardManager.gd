@@ -23,7 +23,8 @@ var api_key: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 var base_headers: Array = [
 	"apikey: " + api_key,
 	"Authorization: Bearer " + api_key,
-	"Content-Type: application/json"
+	"Content-Type: application/json",
+	"Accept-Encoding: identity"  # ADD THIS LINE - tells server not to compress
 ]
 
 var http_request: HTTPRequest

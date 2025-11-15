@@ -65,7 +65,8 @@ func get_admin_headers() -> Array:
 	return [
 		"apikey: " + api_key,
 		"Authorization: Bearer " + admin_access_token,
-		"Content-Type: application/json"
+		"Content-Type: application/json",
+		"Accept-Encoding: identity"  # ADD THIS HERE TOO
 	]
 
 
