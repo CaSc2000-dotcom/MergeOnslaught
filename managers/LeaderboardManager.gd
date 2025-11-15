@@ -35,6 +35,9 @@ func _ready() -> void:
 	http_request = HTTPRequest.new()
 	add_child(http_request)
 	http_request.request_completed.connect(_on_request_completed)
+	
+	# Add timeout settings for web export
+	http_request.timeout = 10.0  # 10 seconds
 
 
 # Fetch top 10 scores from leaderboard
@@ -161,12 +164,34 @@ func _on_request_completed(_result: int, response_code: int, _headers: PackedStr
 
 
 func _handle_get_response(response_code: int, body: PackedByteArray) -> void:
+	print("=== GET Response Debug ===")
+	print("Response code: ", response_code)
+	print("Body length: ", body.size())
+	print("Body as string: ", body.get_string_from_utf8())
+	print("========================")
+	
 	if response_code == 200:
-		var json_data: Variant = JSON.parse_string(body.get_string_from_utf8())
-		if json_data and json_data is Array:
+		var body_string: String = body.get_string_from_utf8()
+		
+		# Check if body is empty
+		if body_string.is_empty():
+			print("ERROR: Response body is empty!")
+			emit_signal("leaderboard_error", "Empty response from server")
+			return
+		
+		var json_data: Variant = JSON.parse_string(body_string)
+		
+		if json_data == null:
+			print("ERROR: Failed to parse JSON")
+			emit_signal("leaderboard_error", "Failed to parse leaderboard data")
+			return
+		
+		if json_data is Array:
+			print("SUCCESS: Parsed ", json_data.size(), " entries")
 			emit_signal("leaderboard_loaded", json_data)
 		else:
-			emit_signal("leaderboard_error", "Failed to parse leaderboard data")
+			print("ERROR: JSON is not an array, it's: ", typeof(json_data))
+			emit_signal("leaderboard_error", "Invalid data format")
 	else:
 		emit_signal("leaderboard_error", "GET Error: " + str(response_code))
 
