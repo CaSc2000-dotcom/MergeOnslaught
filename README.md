@@ -13,25 +13,25 @@ IMMORTAL font by Apostrophic Labs: https://www.1001freefonts.com/immortal.font
 
 Menu Background: https://edermunizz.itch.io/free-pixel-art-forest
 
+400 Sounds Pack: https://ci.itch.io/400-sounds-pack 
+
 ---
 
 # Overview
 
-The software I made was a video game from last module, and it incorporates a cloud database through Supabase that allows users to post their scores to a public leaderboard. As a software engineer, I've never tried using databases of any kind, and by following through with this assignment, I've gained a lot of experience about how databases in the cloud can be utilized in a streamlined and user-friendly way.
+This project is a unique game developed using the Godot game engine, blending elements from Vampire Survivors and the classic puzzle game 2048. The gameplay is split into two main sections: on the left, players face waves of enemies in a survival-style arena, while on the right, they play a 4x4 grid-based 2048 puzzle. Successfully merging tiles in the puzzle grants power-ups, which can be used to gain advantages against the enemies. The game will feature an inventory system for managing collected power-ups and items, and a leaderboard to track high scores. Development will utilize either GDScript or C++ (via GDExtension) based on compatibility with Godot 4.0 and ease of use.
 
-I made this software because I felt that my game was lacking (in more ways than one), and I felt that by including a leaderboard, it will give an edge of competition to spice up the gameplay.
+As a software engineer, I wanted to challenge myself to make my first game from scratch ever. I heard that Godot was a good start for beginners and dove head-first. I learned a lot about Godot's Node, Scene, and Signal systems which helped bring this game together.
+
+**Note**: The game is unfortunately very incomplete and the "Merge" portion of "MergeOnslaught" has not even begun development.
+
+## Game Summary
+
+### ▶️ Play Now!! https://casc2000-dotcom.github.io/MergeOnslaught/ ▶️
+
+You are an adventurer and have to survive the onslaught of orcs coming from all angles!
 
 [Software Demo Video](https://youtu.be/pku5_7JMaco)
-
-### ⬇️[Downlaods/Releases](https://github.com/CaSc2000-dotcom/MergeOnslaught/releases/)⬇️
-
-You are an adventurer and have to survive the onslaught of orcs coming from all angles! 
-
-# Cloud Database
-
-The cloud database I chose was Supabase. It has built-in features for PostGres database creating and maniuplation as well as user authentication.
-
-The main table I created is called `leaderboard` and it contains an ID, the username of the player, and an integer that represents their score. Because Godot does not have a maintained library for Supabase, I used PostgREST to have it interact with the database.
 
 # Development Environment
 
@@ -52,5 +52,5 @@ Libraries:
 # Future Work
 
 - I'm not sure about the security of the admin panel, since the key combo is hard-coded and the authenticated tokens are likely easy to get
-- I want to make the game more challenging, as it's very easy to get a high score
-- I want the UI for the leaderboard to be more polished and refined
+- I want to make the game more robust and complex, as right now gameplay is very simple
+- I want the UI for the leaderboard (and the whole game) to be more polished and refined
