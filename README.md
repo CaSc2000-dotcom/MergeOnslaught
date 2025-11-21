@@ -2,6 +2,8 @@
 
 > **Note:** This project is currently under active development. Features, gameplay, and documentation are subject to change. Stay tuned for updates!
 
+## ▶️ Play Now!! https://casc2000-dotcom.github.io/MergeOnslaught/ ▶️
+
 ## ASSETS USED:
 TinyTown: https://kenney.nl/assets/tiny-town
 
@@ -37,7 +39,7 @@ You are an adventurer and have to survive the onslaught of orcs coming from all 
 
 IDE: Godot Engine (Version: 4.5)
 Compiler: Microsoft Visual C++ (MSVC) 2015-2022 14.44.35211
-Operating System: Windows 10
+Operating System: Windows 11
 Hardware: CPU Intel i7-1255U | 16.0 GB DDR4 RAM | Intel Iris Xe Graphics
 Other Tools: Git, GitHub Desktop, Supabase
 Programming Language: GDScript
